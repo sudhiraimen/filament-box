@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#2563eb">
@@ -24,6 +24,22 @@
   --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
   --nav-w:240px;--header-h:64px;
 }
+
+/* ── DARK MODE VARS ── */
+[data-theme="dark"]{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--surface3:#2a2f45;
+  --text:#e8edf8;--text2:#8a9abf;--text3:#4a5a80;
+  --border:#2a3050;--shadow:0 2px 12px rgba(0,0,0,.4);
+  --blue-light:rgba(37,99,235,.18);
+  --green-light:rgba(22,163,74,.18);
+  --red-light:rgba(220,38,38,.18);
+  --amber-light:rgba(217,119,6,.18);
+}
+
+/* ── THEME TRANSITION ── */
+html{transition:background .2s,color .2s;}
+*{transition:background-color .2s,border-color .2s,color .15s;}
+.progress-fill,.bar-fill{transition:width .6s ease,background-color .2s !important;}
 
 /* ── BASE ── */
 html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--text);-webkit-font-smoothing:antialiased;}
@@ -76,9 +92,34 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 .icon-btn{
   width:38px;height:38px;border-radius:10px;border:1px solid var(--border);
   background:var(--surface);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;color:var(--text2);font-size:18px;transition:all .15s;
+  cursor:pointer;color:var(--text2);font-size:18px;transition:all .15s;position:relative;
 }
 .icon-btn:hover{background:var(--surface2);color:var(--text);}
+
+/* ── THEME DROPDOWN ── */
+.theme-dropdown-wrap{position:relative;}
+.theme-menu{
+  position:absolute;top:calc(100% + 8px);right:0;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);box-shadow:0 8px 32px rgba(0,0,0,.16);
+  min-width:160px;z-index:200;overflow:hidden;
+  opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;
+  transition:opacity .15s,transform .15s;
+}
+.theme-menu.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+.theme-menu-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);padding:12px 14px 6px;}
+.theme-option{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;
+  transition:background .12s;border:none;background:none;font-family:var(--font);
+  width:100%;text-align:left;
+}
+.theme-option:hover{background:var(--surface2);color:var(--text);}
+.theme-option.active{color:var(--blue);background:var(--blue-light);}
+.theme-option i{font-size:17px;flex-shrink:0;}
+.theme-check{margin-left:auto;font-size:14px;opacity:0;}
+.theme-option.active .theme-check{opacity:1;}
 
 .content{flex:1;overflow-y:auto;padding:28px 32px;}
 
@@ -127,6 +168,10 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 .badge-abs{background:#fef3c7;color:#92400e;}
 .badge-petg{background:#d1fae5;color:#065f46;}
 .badge-tpu{background:#ede9fe;color:#4c1d95;}
+[data-theme="dark"] .badge-pla{background:rgba(37,99,235,.2);color:#93c5fd;}
+[data-theme="dark"] .badge-abs{background:rgba(217,119,6,.2);color:#fcd34d;}
+[data-theme="dark"] .badge-petg{background:rgba(22,163,74,.2);color:#6ee7b7;}
+[data-theme="dark"] .badge-tpu{background:rgba(168,85,247,.2);color:#d8b4fe;}
 
 .empty-state{
   background:var(--surface);border-radius:var(--radius);padding:48px;
@@ -209,6 +254,8 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   background:linear-gradient(135deg,var(--blue-light) 0%,#e8f4ff 100%);
   border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:20px;
 }
+[data-theme="dark"] .detail-hero{background:linear-gradient(135deg,rgba(37,99,235,.15) 0%,rgba(37,99,235,.05) 100%);}
+[data-theme="dark"] .scan-banner{background:rgba(37,99,235,.15);}
 .detail-name{font-size:22px;font-weight:700;color:var(--text);}
 .detail-sub{font-size:13px;color:var(--text2);margin-top:4px;}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
@@ -270,11 +317,14 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   .sidebar{display:none;}
   .topbar{
     height:auto;padding:48px 20px 12px;
-    flex-direction:column;align-items:flex-start;gap:0;
+    flex-direction:row;align-items:flex-end;justify-content:space-between;gap:0;
     background:linear-gradient(160deg,#e0e8ff 0%,#f0f4ff 60%);
     border-bottom:none;
   }
-  .topbar-right{display:none;}
+  [data-theme="dark"] .topbar{background:linear-gradient(160deg,#1a1f35 0%,#0f1117 60%);}
+  .topbar-right{display:flex;gap:8px;align-items:center;padding-bottom:2px;}
+  /* hide search & bell on mobile to keep it clean, keep only + and theme */
+  .topbar-right .icon-btn:not(.btn-add-topbar):not(#theme-btn):not(.theme-dropdown-wrap){display:none;}
   .topbar-title{font-size:28px;font-weight:700;}
   .topbar-sub{font-size:13px;color:var(--text2);}
 
@@ -304,33 +354,24 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   .mobile-nav{
     display:flex;justify-content:space-around;align-items:flex-start;
     background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
-    border-top:1px solid var(--border);padding:10px 0 20px;flex-shrink:0;
+    border-top:1px solid var(--border);padding:14px 0 26px;flex-shrink:0;
     position:sticky;bottom:0;z-index:20;
   }
+  [data-theme="dark"] .mobile-nav{background:rgba(26,29,39,0.97);}
   .mobile-nav-btn{
-    display:flex;flex-direction:column;align-items:center;gap:3px;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
     background:none;border:none;font-family:var(--font);cursor:pointer;
-    font-size:10px;font-weight:600;color:var(--text3);padding:0 16px;
+    font-size:11px;font-weight:600;color:var(--text3);padding:0 20px;
     transition:color .15s;
   }
   .mobile-nav-btn.active{color:var(--blue);}
-  .mobile-nav-btn i{font-size:22px;}
-
-  .mobile-fab{
-    position:fixed;bottom:86px;right:20px;width:52px;height:52px;
-    border-radius:50%;background:var(--blue);color:#fff;font-size:26px;
-    display:flex;align-items:center;justify-content:center;border:none;
-    box-shadow:0 6px 20px rgba(37,99,235,.45);cursor:pointer;z-index:30;
-    font-family:var(--font);line-height:1;
-  }
-  .mobile-fab:active{transform:scale(.93);}
+  .mobile-nav-btn i{font-size:26px;}
 
   .content{padding-bottom:8px;}
 }
 
 @media(min-width:769px){
   .mobile-nav{display:none;}
-  .mobile-fab{display:none;}
 }
 
 /* ── PAGE SECTIONS ── */
@@ -383,8 +424,29 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
         <div class="topbar-sub" id="topbar-sub">Your filament inventory</div>
       </div>
       <div class="topbar-right">
+        <div class="icon-btn btn-add-topbar" title="Add Filament" onclick="openAddPanel()" style="background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.3);"><i class="ti ti-plus"></i></div>
         <div class="icon-btn" title="Search"><i class="ti ti-search"></i></div>
         <div class="icon-btn" title="Notifications"><i class="ti ti-bell"></i></div>
+        <div class="theme-dropdown-wrap">
+          <div class="icon-btn" id="theme-btn" title="Appearance" onclick="toggleThemeMenu(event)">
+            <i class="ti ti-sun" id="theme-icon"></i>
+          </div>
+          <div class="theme-menu" id="theme-menu">
+            <div class="theme-menu-title">Appearance</div>
+            <button class="theme-option" data-mode="light" onclick="setTheme('light')">
+              <i class="ti ti-sun"></i> Light
+              <i class="ti ti-check theme-check"></i>
+            </button>
+            <button class="theme-option" data-mode="dark" onclick="setTheme('dark')">
+              <i class="ti ti-moon"></i> Dark
+              <i class="ti ti-check theme-check"></i>
+            </button>
+            <button class="theme-option active" data-mode="system" onclick="setTheme('system')">
+              <i class="ti ti-device-laptop"></i> System
+              <i class="ti ti-check theme-check"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -421,6 +483,23 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
       <!-- SETTINGS PAGE -->
       <section class="page-section" id="page-settings">
         <div style="max-width:560px;">
+          <div class="settings-group">
+            <div class="settings-group-title">Appearance</div>
+            <div class="settings-card">
+              <div class="settings-row" style="cursor:pointer;" onclick="setTheme('light')">
+                <span class="settings-row-label"><i class="ti ti-sun" style="margin-right:8px;color:var(--text2);"></i>Light mode</span>
+                <span id="scheck-light" style="color:var(--blue);display:none;"><i class="ti ti-check"></i></span>
+              </div>
+              <div class="settings-row" style="cursor:pointer;" onclick="setTheme('dark')">
+                <span class="settings-row-label"><i class="ti ti-moon" style="margin-right:8px;color:var(--text2);"></i>Dark mode</span>
+                <span id="scheck-dark" style="color:var(--blue);display:none;"><i class="ti ti-check"></i></span>
+              </div>
+              <div class="settings-row" style="cursor:pointer;" onclick="setTheme('system')">
+                <span class="settings-row-label"><i class="ti ti-device-laptop" style="margin-right:8px;color:var(--text2);"></i>Use system setting</span>
+                <span id="scheck-system" style="color:var(--blue);"><i class="ti ti-check"></i></span>
+              </div>
+            </div>
+          </div>
           <div class="settings-group">
             <div class="settings-group-title">Notifications</div>
             <div class="settings-card">
@@ -467,8 +546,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   </div>
 </div>
 
-<!-- MOBILE FAB -->
-<button class="mobile-fab" onclick="openAddPanel()">+</button>
+<!-- FAB removed - now in topbar -->
 
 <!-- ── ADD PANEL ── -->
 <div class="panel-overlay" id="add-overlay" onclick="overlayClick(event,'add-overlay')">
@@ -482,14 +560,6 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
       <button class="panel-close" onclick="closePanel('add-overlay')"><i class="ti ti-x"></i></button>
     </div>
     <div class="panel-body">
-      <div class="scan-banner" onclick="alert('Camera scan coming soon!')">
-        <div class="scan-icon-wrap"><i class="ti ti-scan"></i></div>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);">Label Scan</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px;">Auto-read brand, material, color & weight.</div>
-        </div>
-        <div style="margin-left:auto;"><i class="ti ti-camera" style="font-size:20px;color:var(--text2);"></i></div>
-      </div>
 
       <div class="form-group">
         <label class="form-label">Material</label>
@@ -596,6 +666,22 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
         <div class="detail-cell"><div class="detail-cell-val" id="d-nozzle">Not set</div><div class="detail-cell-lbl">Nozzle Temp</div></div>
         <div class="detail-cell"><div class="detail-cell-val" id="d-bed">Not set</div><div class="detail-cell-lbl">Bed Temp</div></div>
       </div>
+
+      <!-- EDIT WEIGHT -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);margin-bottom:10px;">Edit Weight</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input id="d-weight-input" type="number" class="form-input" style="flex:1;" placeholder="Weight in grams" min="0">
+          <button class="btn btn-primary btn-sm" onclick="saveWeight()" style="white-space:nowrap;flex-shrink:0;"><i class="ti ti-device-floppy"></i> Save</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="adjustWeight(-50)">−50g</button>
+          <button class="btn btn-secondary btn-sm" onclick="adjustWeight(-100)">−100g</button>
+          <button class="btn btn-secondary btn-sm" onclick="adjustWeight(-250)">−250g</button>
+          <button class="btn btn-secondary btn-sm" onclick="setWeightFull()">Full spool</button>
+        </div>
+      </div>
+
       <div class="notes-box">
         <div class="notes-title">Print Notes</div>
         <div class="notes-body" id="d-notes">No saved notes.</div>
@@ -826,10 +912,33 @@ function openDetail(i){
   document.getElementById('d-bed').textContent='Not set';
   document.getElementById('d-notes').textContent=s.notes||'No saved notes.';
   document.getElementById('d-spool-svg').innerHTML=spoolSVG(s.color,pct,96);
+  document.getElementById('d-weight-input').value=s.weight;
 
   const ov=document.getElementById('detail-overlay');
   ov.style.display='flex';
   requestAnimationFrame(()=>requestAnimationFrame(()=>ov.classList.add('open','visible')));
+}
+
+function saveWeight(){
+  if(currentSpoolIndex<0)return;
+  const val=parseInt(document.getElementById('d-weight-input').value);
+  if(isNaN(val)||val<0){alert('Please enter a valid weight.');return;}
+  spools[currentSpoolIndex].weight=val;
+  // if new weight > total, update total too
+  if(val>spools[currentSpoolIndex].total) spools[currentSpoolIndex].total=val;
+  saveData(); renderAll(); openDetail(currentSpoolIndex);
+}
+
+function adjustWeight(delta){
+  if(currentSpoolIndex<0)return;
+  const input=document.getElementById('d-weight-input');
+  const current=parseInt(input.value)||spools[currentSpoolIndex].weight;
+  input.value=Math.max(0, current+delta);
+}
+
+function setWeightFull(){
+  if(currentSpoolIndex<0)return;
+  document.getElementById('d-weight-input').value=spools[currentSpoolIndex].total;
 }
 
 function logPrint(){
@@ -854,6 +963,51 @@ function exportData(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='filament-box-export.json';a.click();
 }
+
+// ── THEME ──
+let themeMode = localStorage.getItem('theme_mode') || 'system';
+const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+function applyTheme(){
+  const isDark = themeMode === 'dark' || (themeMode === 'system' && systemDark.matches);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  // update topbar icon
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.className = themeMode==='dark' ? 'ti ti-moon' : themeMode==='light' ? 'ti ti-sun' : 'ti ti-device-laptop';
+  // update dropdown active state
+  document.querySelectorAll('.theme-option').forEach(o=>{
+    o.classList.toggle('active', o.dataset.mode === themeMode);
+  });
+  // update settings page checks
+  ['light','dark','system'].forEach(m=>{
+    const el=document.getElementById('scheck-'+m);
+    if(el) el.style.display = m===themeMode ? 'inline' : 'none';
+  });
+  // update meta theme-color
+  document.querySelector('meta[name="theme-color"]').content = isDark ? '#1a1d27' : '#2563eb';
+}
+
+function setTheme(mode){
+  themeMode = mode;
+  localStorage.setItem('theme_mode', mode);
+  applyTheme();
+  closeThemeMenu();
+}
+
+function toggleThemeMenu(e){
+  e.stopPropagation();
+  document.getElementById('theme-menu').classList.toggle('open');
+}
+function closeThemeMenu(){
+  document.getElementById('theme-menu')?.classList.remove('open');
+}
+document.addEventListener('click', closeThemeMenu);
+
+// Listen for system preference changes
+systemDark.addEventListener('change', ()=>{ if(themeMode==='system') applyTheme(); });
+
+// Apply on load
+applyTheme();
 
 // ── INIT ──
 renderAll();
