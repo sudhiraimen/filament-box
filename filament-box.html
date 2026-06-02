@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2563eb">
+<title>Filament Box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#2563eb;--blue-light:#dbeafe;--blue-dark:#1d4ed8;
+  --bg:#f0f4ff;--surface:#ffffff;--surface2:#f5f7fd;--surface3:#eaecf7;
+  --text:#0d1b3e;--text2:#5a6a8a;--text3:#9aaac7;
+  --green:#16a34a;--green-light:#dcfce7;
+  --amber:#d97706;--amber-light:#fef3c7;
+  --red:#dc2626;--red-light:#fee2e2;
+  --border:#dde3f0;--shadow:0 2px 12px rgba(13,27,62,.07);
+  --radius:16px;--radius-sm:10px;--radius-xs:7px;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --nav-w:240px;--header-h:64px;
+}
+
+/* ── DARK MODE VARS ── */
+[data-theme="dark"]{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--surface3:#2a2f45;
+  --text:#e8edf8;--text2:#8a9abf;--text3:#4a5a80;
+  --border:#2a3050;--shadow:0 2px 12px rgba(0,0,0,.4);
+  --blue-light:rgba(37,99,235,.18);
+  --green-light:rgba(22,163,74,.18);
+  --red-light:rgba(220,38,38,.18);
+  --amber-light:rgba(217,119,6,.18);
+}
+
+/* ── THEME TRANSITION ── */
+html{transition:background .2s,color .2s;}
+*{transition:background-color .2s,border-color .2s,color .15s;}
+.progress-fill,.bar-fill{transition:width .6s ease,background-color .2s !important;}
+
+/* ── BASE ── */
+html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* ── LAYOUT SHELL ── */
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── DESKTOP SIDEBAR ── */
+.sidebar{
+  width:var(--nav-w);flex-shrink:0;background:var(--surface);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  padding:0;position:relative;z-index:10;
+}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--border);}
+.sidebar-logo .app-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:4px;}
+.sidebar-logo .app-title{font-size:22px;font-weight:700;color:var(--text);line-height:1.1;}
+.sidebar-logo .app-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+
+.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:2px;}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:11px 14px;
+  border-radius:var(--radius-sm);font-size:14px;font-weight:600;color:var(--text2);
+  cursor:pointer;transition:all .15s;border:none;background:none;font-family:var(--font);
+  text-align:left;width:100%;
+}
+.nav-item i{font-size:20px;flex-shrink:0;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--blue-light);color:var(--blue);}
+
+.sidebar-fab{margin:0 12px 24px;}
+.btn-fab-full{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:13px;background:var(--blue);color:#fff;border:none;
+  border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;
+  font-family:var(--font);transition:background .15s;box-shadow:0 4px 14px rgba(37,99,235,.3);
+}
+.btn-fab-full:hover{background:var(--blue-dark);}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+
+.topbar{
+  height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;flex-shrink:0;
+}
+.topbar-title{font-size:20px;font-weight:700;color:var(--text);}
+.topbar-sub{font-size:13px;color:var(--text3);margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text2);font-size:18px;transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:var(--surface2);color:var(--text);}
+
+/* ── THEME DROPDOWN ── */
+.theme-dropdown-wrap{position:relative;}
+.theme-menu{
+  position:absolute;top:calc(100% + 8px);right:0;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);box-shadow:0 8px 32px rgba(0,0,0,.16);
+  min-width:160px;z-index:200;overflow:hidden;
+  opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;
+  transition:opacity .15s,transform .15s;
+}
+.theme-menu.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+.theme-menu-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);padding:12px 14px 6px;}
+.theme-option{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;
+  transition:background .12s;border:none;background:none;font-family:var(--font);
+  width:100%;text-align:left;
+}
+.theme-option:hover{background:var(--surface2);color:var(--text);}
+.theme-option.active{color:var(--blue);background:var(--blue-light);}
+.theme-option i{font-size:17px;flex-shrink:0;}
+.theme-check{margin-left:auto;font-size:14px;opacity:0;}
+.theme-option.active .theme-check{opacity:1;}
+
+.content{flex:1;overflow-y:auto;padding:28px 32px;}
+
+/* ── DESKTOP STATS ROW ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{
+  background:var(--surface);border-radius:var(--radius);padding:20px;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+}
+.stat-card .icon{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:12px;
+}
+.stat-card .val{font-size:26px;font-weight:700;color:var(--text);line-height:1;}
+.stat-card .lbl{font-size:12px;color:var(--text3);margin-top:4px;font-weight:500;}
+
+/* ── FILTERS ── */
+.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.chip{
+  padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;
+  border:1.5px solid var(--border);background:var(--surface);color:var(--text2);
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.chip.active{background:var(--text);border-color:var(--text);color:#fff;}
+.chip:hover:not(.active){background:var(--surface2);}
+
+/* ── SPOOL GRID (desktop) ── */
+.spool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+
+.spool-card{
+  background:var(--surface);border-radius:var(--radius);padding:20px;
+  border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;
+  transition:transform .12s,box-shadow .12s;
+}
+.spool-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,27,62,.1);}
+.spool-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.spool-brand{font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.spool-name{font-size:18px;font-weight:700;color:var(--text);}
+.spool-weight{font-size:13px;color:var(--text2);margin-top:5px;}
+.spool-visual{width:64px;height:64px;flex-shrink:0;}
+.progress-bar{height:5px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-top:14px;}
+.progress-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:5px;}
+.badge-pla{background:#dbeafe;color:#1d4ed8;}
+.badge-abs{background:#fef3c7;color:#92400e;}
+.badge-petg{background:#d1fae5;color:#065f46;}
+.badge-tpu{background:#ede9fe;color:#4c1d95;}
+[data-theme="dark"] .badge-pla{background:rgba(37,99,235,.2);color:#93c5fd;}
+[data-theme="dark"] .badge-abs{background:rgba(217,119,6,.2);color:#fcd34d;}
+[data-theme="dark"] .badge-petg{background:rgba(22,163,74,.2);color:#6ee7b7;}
+[data-theme="dark"] .badge-tpu{background:rgba(168,85,247,.2);color:#d8b4fe;}
+
+.empty-state{
+  background:var(--surface);border-radius:var(--radius);padding:48px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);
+  grid-column:1/-1;
+}
+.empty-state .empty-icon{font-size:48px;color:var(--text3);margin-bottom:12px;}
+.empty-state h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+.empty-state p{font-size:14px;color:var(--text2);}
+
+/* ── PANEL (add / detail) ── */
+.panel-overlay{
+  position:fixed;inset:0;background:rgba(13,27,62,.4);z-index:100;
+  display:none;opacity:0;transition:opacity .25s;
+}
+.panel-overlay.open{display:flex;justify-content:flex-end;}
+.panel-overlay.visible{opacity:1;}
+.panel{
+  width:420px;max-width:100%;background:var(--surface);height:100%;
+  display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(13,27,62,.15);
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.panel-overlay.visible .panel{transform:translateX(0);}
+.panel-header{
+  padding:24px;border-bottom:1px solid var(--border);display:flex;
+  align-items:flex-start;justify-content:space-between;flex-shrink:0;
+}
+.panel-close{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:var(--text2);transition:all .15s;flex-shrink:0;
+}
+.panel-close:hover{background:var(--surface2);}
+.panel-body{flex:1;overflow-y:auto;padding:24px;}
+.panel-footer{padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:20px;}
+.form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);margin-bottom:8px;display:block;}
+.form-input{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-size:14px;font-family:var(--font);color:var(--text);background:var(--surface);outline:none;
+  transition:border .15s;
+}
+.form-input:focus{border-color:var(--blue);}
+.form-input::placeholder{color:var(--text3);}
+.form-select{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-size:14px;font-family:var(--font);color:var(--text);background:var(--surface);outline:none;
+  appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aaac7' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+}
+.form-select:focus{border-color:var(--blue);}
+.mat-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.mat-chip{
+  padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;
+  border:1.5px solid var(--border);background:var(--surface);color:var(--text2);
+  cursor:pointer;transition:all .15s;
+}
+.mat-chip.active{background:var(--text);border-color:var(--text);color:#fff;}
+.quick-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.qchip{
+  padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);
+  font-size:12px;font-weight:600;color:var(--text2);background:var(--surface);
+  cursor:pointer;transition:all .15s;
+}
+.qchip.sel{background:var(--blue);border-color:var(--blue);color:#fff;}
+.color-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-top:10px;}
+.color-dot{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;}
+.color-dot.sel{border-color:var(--text);transform:scale(1.2);}
+.scan-banner{
+  display:flex;align-items:center;gap:14px;background:var(--blue-light);
+  border-radius:var(--radius-sm);padding:14px;margin-bottom:20px;cursor:pointer;
+}
+.scan-icon-wrap{width:40px;height:40px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;}
+
+/* ── DETAIL PANEL ── */
+.detail-hero{
+  background:linear-gradient(135deg,var(--blue-light) 0%,#e8f4ff 100%);
+  border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:20px;
+}
+[data-theme="dark"] .detail-hero{background:linear-gradient(135deg,rgba(37,99,235,.15) 0%,rgba(37,99,235,.05) 100%);}
+[data-theme="dark"] .scan-banner{background:rgba(37,99,235,.15);}
+.detail-name{font-size:22px;font-weight:700;color:var(--text);}
+.detail-sub{font-size:13px;color:var(--text2);margin-top:4px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.detail-cell{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;border:1px solid var(--border);}
+.detail-cell-val{font-size:15px;font-weight:700;color:var(--text);}
+.detail-cell-lbl{font-size:10px;color:var(--text3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+.notes-box{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border);margin-bottom:16px;}
+.notes-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.notes-body{font-size:13px;color:var(--text2);line-height:1.5;}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;
+  font-family:var(--font);cursor:pointer;border:none;transition:all .15s;
+}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.3);}
+.btn-primary:hover{background:var(--blue-dark);}
+.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-secondary:hover{background:var(--surface3);}
+.btn-danger{background:none;color:var(--red);border:1px solid var(--border);}
+.btn-danger:hover{background:var(--red-light);}
+.btn-disabled{background:var(--text3);color:#fff;cursor:not-allowed;opacity:.7;}
+.btn-full{width:100%;}
+.btn-sm{padding:8px 14px;font-size:13px;}
+
+/* ── STATS PAGE ── */
+.stats-row-page{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.stats-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);margin-bottom:14px;}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.bar-label{font-size:13px;font-weight:600;color:var(--text2);width:44px;flex-shrink:0;}
+.bar-track{flex:1;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;}
+.bar-val{font-size:12px;font-weight:600;color:var(--text2);width:24px;text-align:right;}
+.overview-card{background:var(--surface);border-radius:var(--radius);padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.overview-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+.overview-row:last-child{border-bottom:none;}
+.overview-key{font-size:14px;color:var(--text2);}
+.overview-val{font-size:14px;font-weight:700;color:var(--text);}
+
+/* ── SETTINGS ── */
+.settings-group{margin-bottom:24px;}
+.settings-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px;}
+.settings-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid var(--border);}
+.settings-row:last-child{border-bottom:none;}
+.settings-row-label{font-size:14px;font-weight:500;color:var(--text);}
+.settings-row-val{font-size:13px;color:var(--text2);}
+.toggle{width:44px;height:26px;border-radius:13px;background:var(--blue);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle::after{content:'';position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;}
+.toggle.off{background:var(--border);}
+.toggle.off::after{transform:translateX(-18px);}
+
+/* ═══════════════════════════════════
+   MOBILE STYLES (≤ 768px)
+═══════════════════════════════════ */
+@media(max-width:768px){
+  /* Full-height flex column: topbar → content → nav, nothing escapes */
+  html,body{height:100%;overflow:hidden;}
+  .app{flex-direction:column;height:100vh;overflow:hidden;}
+  .sidebar{display:none;}
+  .main{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+
+  .topbar{
+    height:auto;padding:48px 20px 12px;flex-shrink:0;
+    flex-direction:row;align-items:flex-end;justify-content:space-between;gap:0;
+    background:linear-gradient(160deg,#e0e8ff 0%,#f0f4ff 60%);
+    border-bottom:none;
+  }
+  [data-theme="dark"] .topbar{background:linear-gradient(160deg,#1a1f35 0%,#0f1117 60%);}
+  .topbar-right{display:flex;gap:8px;align-items:center;padding-bottom:2px;}
+  .topbar-right .icon-btn:not(.btn-add-topbar):not(#theme-btn):not(.theme-dropdown-wrap){display:none;}
+  .topbar-title{font-size:28px;font-weight:700;}
+  .topbar-sub{font-size:13px;color:var(--text2);}
+
+  /* Content fills remaining space and scrolls internally */
+  .content{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 16px 24px;-webkit-overflow-scrolling:touch;}
+
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+  .stat-card{padding:14px 12px;}
+  .stat-card .icon{width:32px;height:32px;font-size:16px;margin-bottom:8px;}
+  .stat-card .val{font-size:20px;}
+
+  .filters{gap:7px;margin-bottom:16px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+  .chip{padding:6px 14px;font-size:12px;}
+
+  .spool-grid{grid-template-columns:1fr;}
+
+  /* panel becomes full-screen bottom sheet on mobile */
+  .panel-overlay.open{justify-content:flex-end;align-items:flex-end;}
+  .panel{width:100%;height:92vh;border-radius:24px 24px 0 0;transform:translateY(100%);}
+  .panel-overlay.visible .panel{transform:translateY(0);}
+
+  .stats-row-page{grid-template-columns:1fr;}
+
+  /* Bottom nav: flex-shrink:0 keeps it pinned, never scrolls away */
+  .mobile-nav{
+    display:flex;justify-content:space-around;align-items:flex-start;
+    background:rgba(255,255,255,0.97);backdrop-filter:blur(16px);
+    border-top:1px solid var(--border);
+    padding:14px 0 26px;
+    flex-shrink:0;
+  }
+  [data-theme="dark"] .mobile-nav{background:rgba(26,29,39,0.99);}
+  .mobile-nav-btn{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    background:none;border:none;font-family:var(--font);cursor:pointer;
+    font-size:11px;font-weight:600;color:var(--text3);padding:0 20px;
+    transition:color .15s;
+  }
+  .mobile-nav-btn.active{color:var(--blue);}
+  .mobile-nav-btn i{font-size:26px;}
+}
+
+@media(min-width:769px){
+  .mobile-nav{display:none;}
+}
+
+/* ── PAGE SECTIONS ── */
+.page-section{display:none;}
+.page-section.active{display:block;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ── TRANSITIONS / POLISH ── */
+.spool-card,.stat-card,.settings-card,.overview-card{transition:box-shadow .15s,transform .15s;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- DESKTOP SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="app-label">Smart Inventory</div>
+      <div class="app-title">Filament Box</div>
+      <div class="app-sub" id="sb-subtitle">Loading…</div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-page="home" onclick="navTo('home',this)">
+        <i class="ti ti-home"></i> Home
+      </button>
+      <button class="nav-item" data-page="stats" onclick="navTo('stats',this)">
+        <i class="ti ti-chart-bar"></i> Statistics
+      </button>
+      <button class="nav-item" data-page="settings" onclick="navTo('settings',this)">
+        <i class="ti ti-settings"></i> Settings
+      </button>
+    </nav>
+    <div class="sidebar-fab">
+      <button class="btn-fab-full" onclick="openAddPanel()">
+        <i class="ti ti-plus"></i> Add Filament
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="topbar" id="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Home</div>
+        <div class="topbar-sub" id="topbar-sub">Your filament inventory</div>
+      </div>
+      <div class="topbar-right">
+        <div class="icon-btn btn-add-topbar" title="Add Filament" onclick="openAddPanel()" style="background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.3);"><i class="ti ti-plus"></i></div>
+        <div class="icon-btn" title="Search"><i class="ti ti-search"></i></div>
+        <div class="icon-btn" title="Notifications"><i class="ti ti-bell"></i></div>
+        <div class="theme-dropdown-wrap">
+          <div class="icon-btn" id="theme-btn" title="Appearance" onclick="toggleThemeMenu(event)">
+            <i class="ti ti-sun" id="theme-icon"></i>
+          </div>
+          <div class="theme-menu" id="theme-menu">
+            <div class="theme-menu-title">Appearance</div>
+            <button class="theme-option" data-mode="light" onclick="setTheme('light')">
+              <i class="ti ti-sun"></i> Light
+              <i class="ti ti-check theme-check"></i>
+            </button>
+            <button class="theme-option" data-mode="dark" onclick="setTheme('dark')">
+              <i class="ti ti-moon"></i> Dark
+              <i class="ti ti-check theme-check"></i>
+            </button>
+            <button class="theme-option active" data-mode="system" onclick="setTheme('system')">
+              <i class="ti ti-device-laptop"></i> System
+              <i class="ti ti-check theme-check"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content" id="main-content">
+
+      <!-- HOME PAGE -->
+      <section class="page-section active" id="page-home">
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="filters" id="filters">
+          <div class="chip active" data-filter="All" onclick="filterSpools(this)">All</div>
+          <div class="chip" data-filter="ABS" onclick="filterSpools(this)">ABS</div>
+          <div class="chip" data-filter="PETG" onclick="filterSpools(this)">PETG</div>
+          <div class="chip" data-filter="PLA" onclick="filterSpools(this)">PLA</div>
+          <div class="chip" data-filter="TPU" onclick="filterSpools(this)">TPU</div>
+        </div>
+        <div class="spool-grid" id="spool-grid"></div>
+      </section>
+
+      <!-- STATS PAGE -->
+      <section class="page-section" id="page-stats">
+        <div class="stats-row-page">
+          <div>
+            <div class="stats-section-title">By Material</div>
+            <div class="overview-card" id="mat-bars"></div>
+          </div>
+          <div>
+            <div class="stats-section-title">Overview</div>
+            <div class="overview-card" id="overview-data"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS PAGE -->
+      <section class="page-section" id="page-settings">
+        <div style="max-width:560px;">
+          <div class="settings-group">
+            <div class="settings-group-title">Appearance</div>
+            <div class="settings-card">
+              <div class="settings-row" style="cursor:pointer;" onclick="setTheme('light')">
+                <span class="settings-row-label"><i class="ti ti-sun" style="margin-right:8px;color:var(--text2);"></i>Light mode</span>
+                <span id="scheck-light" style="color:var(--blue);display:none;"><i class="ti ti-check"></i></span>
+              </div>
+              <div class="settings-row" style="cursor:pointer;" onclick="setTheme('dark')">
+                <span class="settings-row-label"><i class="ti ti-moon" style="margin-right:8px;color:var(--text2);"></i>Dark mode</span>
+                <span id="scheck-dark" style="color:var(--blue);display:none;"><i class="ti ti-check"></i></span>
+              </div>
+              <div class="settings-row" style="cursor:pointer;" onclick="setTheme('system')">
+                <span class="settings-row-label"><i class="ti ti-device-laptop" style="margin-right:8px;color:var(--text2);"></i>Use system setting</span>
+                <span id="scheck-system" style="color:var(--blue);"><i class="ti ti-check"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Notifications</div>
+            <div class="settings-card">
+              <div class="settings-row"><span class="settings-row-label">Low stock alerts</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+              <div class="settings-row"><span class="settings-row-label">Reorder reminders</span><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Units</div>
+            <div class="settings-card">
+              <div class="settings-row"><span class="settings-row-label">Weight unit</span><span class="settings-row-val">Grams (g)</span></div>
+              <div class="settings-row"><span class="settings-row-label">Temperature unit</span><span class="settings-row-val">°C</span></div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Data</div>
+            <div class="settings-card">
+              <div class="settings-row" style="cursor:pointer;" onclick="exportData()"><span class="settings-row-label">Export inventory</span><span class="settings-row-val"><i class="ti ti-download" style="color:var(--blue);font-size:18px"></i></span></div>
+              <div class="settings-row" style="cursor:pointer;"><span class="settings-row-label">Import spools</span><span class="settings-row-val"><i class="ti ti-upload" style="color:var(--blue);font-size:18px"></i></span></div>
+              <div class="settings-row" style="cursor:pointer;" onclick="if(confirm('Clear all spools?')){spools=[];saveData();renderAll();navTo('home');}">
+                <span class="settings-row-label" style="color:var(--red)">Clear all data</span>
+                <span class="settings-row-val"><i class="ti ti-trash" style="color:var(--red);font-size:18px"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">About</div>
+            <div class="settings-card">
+              <div class="settings-row"><span class="settings-row-label">Version</span><span class="settings-row-val">2.0.0</span></div>
+              <div class="settings-row"><span class="settings-row-label">Storage</span><span class="settings-row-val" id="storage-size">—</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-nav">
+      <button class="mobile-nav-btn active" data-page="home" onclick="navTo('home',this)"><i class="ti ti-home"></i>Home</button>
+      <button class="mobile-nav-btn" data-page="stats" onclick="navTo('stats',this)"><i class="ti ti-chart-bar"></i>Statistics</button>
+      <button class="mobile-nav-btn" data-page="settings" onclick="navTo('settings',this)"><i class="ti ti-settings"></i>Settings</button>
+    </nav>
+  </div>
+</div>
+
+<!-- FAB removed - now in topbar -->
+
+<!-- ── ADD PANEL ── -->
+<div class="panel-overlay" id="add-overlay" onclick="overlayClick(event,'add-overlay')">
+  <div class="panel" id="add-panel">
+    <div class="panel-header">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:4px;">New Spool</div>
+        <div style="font-size:22px;font-weight:700;color:var(--text);">Add Filament</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;">Custom brands & colors are saved as entries.</div>
+      </div>
+      <button class="panel-close" onclick="closePanel('add-overlay')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="panel-body">
+
+      <div class="form-group">
+        <label class="form-label">Material</label>
+        <div class="mat-chips">
+          <div class="mat-chip" data-mat="ABS" onclick="selectMat(this)">ABS</div>
+          <div class="mat-chip" data-mat="PETG" onclick="selectMat(this)">PETG</div>
+          <div class="mat-chip active" data-mat="PLA" onclick="selectMat(this)">PLA</div>
+          <div class="mat-chip" data-mat="TPU" onclick="selectMat(this)">TPU</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Brand</label>
+        <input class="form-input" id="f-brand" placeholder="Brand name" oninput="checkForm()">
+        <div class="quick-chips">
+          <div class="qchip" onclick="setBrand('Anycubic',this)">Anycubic</div>
+          <div class="qchip" onclick="setBrand('Bambu Lab',this)">Bambu Lab</div>
+          <div class="qchip" onclick="setBrand('ColorFabb',this)">ColorFabb</div>
+          <div class="qchip" onclick="setBrand('Creality',this)">Creality</div>
+          <div class="qchip" onclick="setBrand('Elegoo',this)">Elegoo</div>
+          <div class="qchip" onclick="setBrand('SUNLU',this)">SUNLU</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Name / Type</label>
+        <select class="form-select" id="f-name" onchange="checkForm()">
+          <option value="">Select type…</option>
+          <option>Basic</option><option>Silk</option><option>Matte</option>
+          <option>Metal</option><option>Wood</option><option>Marble</option>
+          <option>Glow-in-the-dark</option><option>Carbon Fiber</option>
+          <option>Glass Fiber</option><option>Translucent</option>
+          <option>High Speed</option><option>Flexible</option>
+          <option>Engineering</option><option>Recycled</option>
+          <option>Gradient</option><option>Rainbow</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Color</label>
+        <div class="color-grid" id="color-picker">
+          <div class="color-dot sel" data-c="#3b82f6" style="background:#3b82f6" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#60a5fa" style="background:#60a5fa" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#06b6d4" style="background:#06b6d4" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#22c55e" style="background:#22c55e" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#84cc16" style="background:#84cc16" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#f59e0b" style="background:#f59e0b" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#f97316" style="background:#f97316" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#ef4444" style="background:#ef4444" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#f43f5e" style="background:#f43f5e" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#ec4899" style="background:#ec4899" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#a855f7" style="background:#a855f7" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#8b5cf6" style="background:#8b5cf6" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#6366f1" style="background:#6366f1" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#14b8a6" style="background:#14b8a6" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#d97706" style="background:#d97706" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#78716c" style="background:#78716c" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#94a3b8" style="background:#94a3b8" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#cbd5e1" style="background:#cbd5e1;border-color:#e2e8f0" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#ffffff" style="background:#fff;border-color:#e2e8f0" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#1a1a1a" style="background:#1a1a1a" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#a16207" style="background:#a16207" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#b45309" style="background:#b45309" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#15803d" style="background:#15803d" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#0e7490" style="background:#0e7490" onclick="selectColor(this)"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Weight (g)</label>
+        <input class="form-input" id="f-weight" type="number" placeholder="1000" value="1000" oninput="checkForm()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes (optional)</label>
+        <input class="form-input" id="f-notes" placeholder="Print temperature, tips…">
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-full btn-disabled" id="save-btn" onclick="saveSpool()">Save Filament</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DETAIL PANEL ── -->
+<div class="panel-overlay" id="detail-overlay" onclick="overlayClick(event,'detail-overlay')">
+  <div class="panel" id="detail-panel">
+    <div class="panel-header">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:4px;">Filament Details</div>
+        <div class="detail-name" id="d-name">Spool</div>
+      </div>
+      <button class="panel-close" onclick="closePanel('detail-overlay')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="panel-body">
+      <div class="detail-hero">
+        <div id="d-spool-svg" style="display:flex;justify-content:center;margin-bottom:14px;"></div>
+        <div class="detail-sub" id="d-remaining">—</div>
+        <div style="margin-top:10px;" id="d-badge"></div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-cell"><div class="detail-cell-val" id="d-material">—</div><div class="detail-cell-lbl">Material</div></div>
+        <div class="detail-cell"><div class="detail-cell-val" id="d-status">—</div><div class="detail-cell-lbl">Status</div></div>
+        <div class="detail-cell"><div class="detail-cell-val" id="d-nozzle">Not set</div><div class="detail-cell-lbl">Nozzle Temp</div></div>
+        <div class="detail-cell"><div class="detail-cell-val" id="d-bed">Not set</div><div class="detail-cell-lbl">Bed Temp</div></div>
+      </div>
+
+      <!-- EDIT WEIGHT -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);margin-bottom:10px;">Edit Weight</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input id="d-weight-input" type="number" class="form-input" style="flex:1;" placeholder="Weight in grams" min="0">
+          <button class="btn btn-primary btn-sm" onclick="saveWeight()" style="white-space:nowrap;flex-shrink:0;"><i class="ti ti-device-floppy"></i> Save</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="adjustWeight(-50)">−50g</button>
+          <button class="btn btn-secondary btn-sm" onclick="adjustWeight(-100)">−100g</button>
+          <button class="btn btn-secondary btn-sm" onclick="adjustWeight(-250)">−250g</button>
+          <button class="btn btn-secondary btn-sm" onclick="setWeightFull()">Full spool</button>
+        </div>
+      </div>
+
+      <div class="notes-box">
+        <div class="notes-title">Print Notes</div>
+        <div class="notes-body" id="d-notes">No saved notes.</div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="logPrint()"><i class="ti ti-printer"></i> Log Print</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSpool()"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+let spools = JSON.parse(localStorage.getItem('filament_spools')||'[]');
+let currentFilter = 'All';
+let selectedMat = 'PLA';
+let selectedColor = '#3b82f6';
+let currentSpoolIndex = -1;
+let currentPage = 'home';
+
+if(spools.length === 0){
+  spools = [
+    {brand:'Bambu Lab',name:'Basic',color:'#3b82f6',material:'PLA',weight:500,total:1000,status:'Available',notes:'Great for general prints. Nozzle 220°C.',prints:3},
+    {brand:'Elegoo',name:'Silk',color:'#a855f7',material:'PLA',weight:800,total:1000,status:'Available',notes:'Shiny surface, 210°C nozzle.',prints:1},
+    {brand:'SUNLU',name:'Carbon Fiber',color:'#1a1a1a',material:'ABS',weight:200,total:1000,status:'Running low',notes:'Hardened nozzle required.',prints:5},
+  ];
+  saveData();
+}
+
+function saveData(){
+  localStorage.setItem('filament_spools',JSON.stringify(spools));
+  updateStorageSize();
+}
+
+function updateStorageSize(){
+  const el=document.getElementById('storage-size');
+  if(el){const b=new Blob([JSON.stringify(spools)]).size;el.textContent=b<1024?b+' B':Math.round(b/1024)+' KB';}
+}
+
+// ── SVG SPOOL ──
+function spoolSVG(color,pct,size=72){
+  const r=27,cx=size/2,cy=size/2,circ=2*Math.PI*r,filled=circ*(1-pct/100);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="10"
+      stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${filled.toFixed(2)}"
+      stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/>
+    <circle cx="${cx}" cy="${cy}" r="11" fill="#0d1b3e"/>
+  </svg>`;
+}
+
+function matBadge(m){
+  const map={PLA:'badge-pla',ABS:'badge-abs',PETG:'badge-petg',TPU:'badge-tpu'};
+  return `<span class="badge ${map[m]||'badge-pla'}">${m}</span>`;
+}
+
+// ── RENDER HOME ──
+function renderHome(){
+  const filtered = currentFilter==='All' ? spools : spools.filter(s=>s.material===currentFilter);
+  const totalKg = spools.reduce((a,s)=>a+s.weight,0)/1000;
+  const reorder = spools.filter(s=>s.weight/s.total<0.2).length;
+  const matCounts = {};
+  spools.forEach(s=>{matCounts[s.material]=(matCounts[s.material]||0)+1;});
+  const topMat = Object.entries(matCounts).sort((a,b)=>b[1]-a[1])[0];
+  const totalPrints = spools.reduce((a,s)=>a+s.prints,0);
+
+  // subtitle
+  const sub = `${spools.length} spool${spools.length!==1?'s':''} · ${reorder} running low`;
+  document.getElementById('sb-subtitle').textContent = sub;
+  document.getElementById('topbar-sub').textContent = sub;
+
+  // stats grid
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="icon" style="background:#dbeafe;color:#1d4ed8;"><i class="ti ti-weight"></i></div><div class="val">${totalKg.toFixed(2)} kg</div><div class="lbl">Total Available</div></div>
+    <div class="stat-card"><div class="icon" style="background:#d1fae5;color:#065f46;"><i class="ti ti-layers-intersect"></i></div><div class="val">${spools.length}</div><div class="lbl">Total Spools</div></div>
+    <div class="stat-card"><div class="icon" style="background:#fef3c7;color:#92400e;"><i class="ti ti-printer"></i></div><div class="val">${totalPrints}</div><div class="lbl">Prints Logged</div></div>
+    <div class="stat-card"><div class="icon" style="background:${reorder>0?'#fee2e2':'#d1fae5'};color:${reorder>0?'#dc2626':'#065f46'};"><i class="ti ti-alert-triangle"></i></div><div class="val">${reorder}</div><div class="lbl">To Reorder</div></div>
+  `;
+
+  // spool grid
+  const grid = document.getElementById('spool-grid');
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="ti ti-box"></i></div><h3>No spools found</h3><p>${currentFilter==='All'?'Add your first filament spool to get started.':'No '+currentFilter+' spools in your inventory.'}</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(s=>{
+    const idx=spools.indexOf(s), pct=Math.round((s.weight/s.total)*100);
+    const lowWarn = pct<20 ? `<span style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px;display:block;">⚠ Low stock</span>`:'';
+    return `<div class="spool-card" onclick="openDetail(${idx})">
+      <div class="spool-card-top">
+        <div style="flex:1;min-width:0;">
+          <div class="spool-brand">${s.brand}</div>
+          <div class="spool-name">${s.name}</div>
+          <div>${matBadge(s.material)}</div>
+          <div class="spool-weight">${s.weight.toLocaleString()} g remaining</div>
+          ${lowWarn}
+        </div>
+        <div class="spool-visual">${spoolSVG(s.color,pct)}</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${s.color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER STATS ──
+function renderStats(){
+  const matCounts={}, matColors={PLA:'#3b82f6',ABS:'#f59e0b',PETG:'#22c55e',TPU:'#a855f7'};
+  spools.forEach(s=>{matCounts[s.material]=(matCounts[s.material]||0)+1;});
+  const totalPrints=spools.reduce((a,s)=>a+s.prints,0);
+  const totalWeight=spools.reduce((a,s)=>a+s.weight,0);
+  const reorder=spools.filter(s=>s.weight/s.total<0.2).length;
+
+  const bars = document.getElementById('mat-bars');
+  if(spools.length===0){bars.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);">No data yet.</div>';return;}
+  bars.innerHTML = Object.entries(matCounts).sort((a,b)=>b[1]-a[1]).map(([mat,cnt])=>{
+    const pct=Math.round((cnt/spools.length)*100);
+    return `<div class="bar-row" style="padding:10px 20px 0;">
+      <div class="bar-label">${mat}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${matColors[mat]||'#94a3b8'}"></div></div>
+      <div class="bar-val">${cnt}</div>
+    </div>`;
+  }).join('')+'<div style="height:10px;"></div>';
+
+  document.getElementById('overview-data').innerHTML = `
+    <div class="overview-row" style="padding:12px 20px;"><span class="overview-key">Total spools</span><span class="overview-val">${spools.length}</span></div>
+    <div class="overview-row" style="padding:12px 20px;"><span class="overview-key">Total remaining</span><span class="overview-val">${totalWeight.toLocaleString()} g</span></div>
+    <div class="overview-row" style="padding:12px 20px;"><span class="overview-key">Prints logged</span><span class="overview-val">${totalPrints}</span></div>
+    <div class="overview-row" style="padding:12px 20px;"><span class="overview-key">Low stock</span><span class="overview-val" style="color:${reorder>0?'var(--red)':'var(--green)'}">${reorder}</span></div>
+    <div class="overview-row" style="padding:12px 20px;"><span class="overview-key">Avg per spool</span><span class="overview-val">${spools.length?Math.round(totalWeight/spools.length).toLocaleString()+' g':'—'}</span></div>
+  `;
+}
+
+function renderAll(){renderHome();renderStats();}
+
+// ── NAV ──
+const pageTitles={home:'Home',stats:'Statistics',settings:'Settings'};
+function navTo(page, el){
+  currentPage=page;
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+
+  // desktop sidebar
+  document.querySelectorAll('.sidebar .nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll(`.sidebar [data-page="${page}"]`).forEach(n=>n.classList.add('active'));
+
+  // mobile nav
+  document.querySelectorAll('.mobile-nav-btn').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll(`.mobile-nav-btn[data-page="${page}"]`).forEach(n=>n.classList.add('active'));
+
+  document.getElementById('topbar-title').textContent=pageTitles[page]||page;
+  if(page==='stats')renderStats();
+  updateStorageSize();
+}
+
+function filterSpools(el){
+  document.querySelectorAll('#filters .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter=el.dataset.filter;
+  renderHome();
+}
+
+// ── PANELS ──
+function openAddPanel(){
+  const ov=document.getElementById('add-overlay');
+  ov.style.display='flex';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>ov.classList.add('open','visible')));
+}
+function closePanel(id){
+  const ov=document.getElementById(id);
+  ov.classList.remove('visible');
+  setTimeout(()=>{ov.classList.remove('open');ov.style.display='none';},300);
+}
+function overlayClick(e,id){if(e.target===document.getElementById(id))closePanel(id);}
+
+// ── FORM ──
+function selectMat(el){
+  document.querySelectorAll('.mat-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); selectedMat=el.dataset.mat;
+}
+function selectColor(el){
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('sel'));
+  el.classList.add('sel'); selectedColor=el.dataset.c;
+}
+function setBrand(b,el){
+  document.getElementById('f-brand').value=b;
+  document.querySelectorAll('.qchip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel'); checkForm();
+}
+function checkForm(){
+  const ok=document.getElementById('f-brand').value.trim()&&document.getElementById('f-name').value;
+  const btn=document.getElementById('save-btn');
+  btn.className='btn btn-full '+(ok?'btn-primary':'btn-disabled');
+}
+function saveSpool(){
+  const brand=document.getElementById('f-brand').value.trim();
+  const name=document.getElementById('f-name').value;
+  const weight=parseInt(document.getElementById('f-weight').value)||1000;
+  const notes=document.getElementById('f-notes').value.trim();
+  if(!brand||!name)return;
+  spools.push({brand,name,color:selectedColor,material:selectedMat,weight,total:weight,status:'Available',notes,prints:0});
+  saveData(); renderAll();
+  // reset
+  document.getElementById('f-brand').value='';
+  document.getElementById('f-name').value='';
+  document.getElementById('f-weight').value=1000;
+  document.getElementById('f-notes').value='';
+  document.querySelectorAll('.qchip').forEach(c=>c.classList.remove('sel'));
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('sel'));
+  document.querySelector('.color-dot[data-c="#3b82f6"]').classList.add('sel');
+  selectedColor='#3b82f6'; selectedMat='PLA';
+  document.querySelectorAll('.mat-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.mat-chip[data-mat="PLA"]').classList.add('active');
+  checkForm();
+  closePanel('add-overlay');
+}
+
+// ── DETAIL ──
+function openDetail(i){
+  currentSpoolIndex=i;
+  const s=spools[i], pct=Math.round((s.weight/s.total)*100);
+  document.getElementById('d-name').textContent=s.brand+' '+s.name;
+  document.getElementById('d-remaining').textContent='Estimated remaining: '+s.weight.toLocaleString()+' g ('+pct+'%)';
+  document.getElementById('d-badge').innerHTML=matBadge(s.material);
+  document.getElementById('d-material').textContent=s.material;
+  document.getElementById('d-status').textContent=pct<20?'Running Low':'Available';
+  document.getElementById('d-nozzle').textContent='Not set';
+  document.getElementById('d-bed').textContent='Not set';
+  document.getElementById('d-notes').textContent=s.notes||'No saved notes.';
+  document.getElementById('d-spool-svg').innerHTML=spoolSVG(s.color,pct,96);
+  document.getElementById('d-weight-input').value=s.weight;
+
+  const ov=document.getElementById('detail-overlay');
+  ov.style.display='flex';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>ov.classList.add('open','visible')));
+}
+
+function saveWeight(){
+  if(currentSpoolIndex<0)return;
+  const val=parseInt(document.getElementById('d-weight-input').value);
+  if(isNaN(val)||val<0){alert('Please enter a valid weight.');return;}
+  spools[currentSpoolIndex].weight=val;
+  // if new weight > total, update total too
+  if(val>spools[currentSpoolIndex].total) spools[currentSpoolIndex].total=val;
+  saveData(); renderAll(); openDetail(currentSpoolIndex);
+}
+
+function adjustWeight(delta){
+  if(currentSpoolIndex<0)return;
+  const input=document.getElementById('d-weight-input');
+  const current=parseInt(input.value)||spools[currentSpoolIndex].weight;
+  input.value=Math.max(0, current+delta);
+}
+
+function setWeightFull(){
+  if(currentSpoolIndex<0)return;
+  document.getElementById('d-weight-input').value=spools[currentSpoolIndex].total;
+}
+
+function logPrint(){
+  if(currentSpoolIndex<0)return;
+  const used=prompt('Filament used in this print (g):');
+  if(!used)return;
+  const g=parseInt(used);if(isNaN(g)||g<0)return;
+  spools[currentSpoolIndex].weight=Math.max(0,spools[currentSpoolIndex].weight-g);
+  spools[currentSpoolIndex].prints=(spools[currentSpoolIndex].prints||0)+1;
+  saveData(); renderAll(); openDetail(currentSpoolIndex);
+}
+
+function deleteSpool(){
+  if(currentSpoolIndex<0)return;
+  if(!confirm(`Delete "${spools[currentSpoolIndex].brand} ${spools[currentSpoolIndex].name}"?`))return;
+  spools.splice(currentSpoolIndex,1); currentSpoolIndex=-1;
+  saveData(); renderAll(); closePanel('detail-overlay');
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(spools,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='filament-box-export.json';a.click();
+}
+
+// ── THEME ──
+let themeMode = localStorage.getItem('theme_mode') || 'system';
+const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+function applyTheme(){
+  const isDark = themeMode === 'dark' || (themeMode === 'system' && systemDark.matches);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  // update topbar icon
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.className = themeMode==='dark' ? 'ti ti-moon' : themeMode==='light' ? 'ti ti-sun' : 'ti ti-device-laptop';
+  // update dropdown active state
+  document.querySelectorAll('.theme-option').forEach(o=>{
+    o.classList.toggle('active', o.dataset.mode === themeMode);
+  });
+  // update settings page checks
+  ['light','dark','system'].forEach(m=>{
+    const el=document.getElementById('scheck-'+m);
+    if(el) el.style.display = m===themeMode ? 'inline' : 'none';
+  });
+  // update meta theme-color
+  document.querySelector('meta[name="theme-color"]').content = isDark ? '#1a1d27' : '#2563eb';
+}
+
+function setTheme(mode){
+  themeMode = mode;
+  localStorage.setItem('theme_mode', mode);
+  applyTheme();
+  closeThemeMenu();
+}
+
+function toggleThemeMenu(e){
+  e.stopPropagation();
+  document.getElementById('theme-menu').classList.toggle('open');
+}
+function closeThemeMenu(){
+  document.getElementById('theme-menu')?.classList.remove('open');
+}
+document.addEventListener('click', closeThemeMenu);
+
+// Listen for system preference changes
+systemDark.addEventListener('change', ()=>{ if(themeMode==='system') applyTheme(); });
+
+// Apply on load
+applyTheme();
+
+// ── INIT ──
+renderAll();
+updateStorageSize();
+</script>
+</body>
+</html>
