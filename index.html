@@ -535,13 +535,13 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   <!-- DESKTOP SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-icon">🧵</div>
+      <div class="logo-icon"><i class="ti ti-tournament" style="color:#fff;font-size:26px;"></i></div>
       <div class="logo-title">Filament Box</div>
       <div class="logo-sub" id="sb-subtitle">Loading…</div>
     </div>
     <div style="padding:14px 16px 8px;">
       <div class="sidebar-streak">
-        <div class="streak-flame">🔥</div>
+        <div class="streak-flame"><i class="ti ti-flame" style="font-size:26px;color:var(--orange);"></i></div>
         <div>
           <div class="streak-val" id="streak-val">0</div>
           <div class="streak-lbl">Prints logged</div>
@@ -570,7 +570,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   <div class="main">
     <header class="topbar">
       <div class="topbar-left">
-        <div class="topbar-title" id="topbar-title">🏠 Home</div>
+        <div class="topbar-title" id="topbar-title">Home</div>
         <div class="topbar-sub" id="topbar-sub">Your filament collection</div>
       </div>
       <div class="topbar-right">
@@ -604,7 +604,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
         <div class="xp-banner">
           <div class="xp-left">
             <div class="xp-label">Smart Inventory</div>
-            <div class="xp-title">Filament Box 🧵</div>
+            <div class="xp-title">Filament Box</div>
             <div class="xp-sub" id="xp-sub">Loading your collection…</div>
           </div>
           <div class="xp-right">
@@ -634,11 +634,11 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
       <section class="page-section" id="page-stats">
         <div class="stats-row-page">
           <div class="stats-box">
-            <div class="stats-box-title">📊 By Material</div>
+            <div class="stats-box-title"><i class="ti ti-chart-bar" style="font-size:16px;vertical-align:middle;margin-right:6px;"></i>By Material</div>
             <div id="mat-bars"></div>
           </div>
           <div class="stats-box">
-            <div class="stats-box-title">🏆 Overview</div>
+            <div class="stats-box-title"><i class="ti ti-trophy" style="font-size:16px;vertical-align:middle;margin-right:6px;"></i>Overview</div>
             <div id="overview-data"></div>
           </div>
         </div>
@@ -648,48 +648,48 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
       <section class="page-section" id="page-settings">
         <div style="max-width:560px;">
           <div class="settings-group">
-            <div class="settings-group-title">🎨 Appearance</div>
+            <div class="settings-group-title"><i class="ti ti-palette" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>Appearance</div>
             <div class="settings-card">
               <div class="settings-row" style="cursor:pointer;" onclick="setTheme('light')">
-                <span class="settings-row-label">☀️ Light mode</span>
+                <span class="settings-row-label"><i class="ti ti-sun" style="font-size:16px;vertical-align:middle;margin-right:8px;color:var(--text2);"></i>Light mode</span>
                 <span id="scheck-light" style="color:var(--green);display:none;"><i class="ti ti-check" style="font-size:20px;font-weight:900;"></i></span>
               </div>
               <div class="settings-row" style="cursor:pointer;" onclick="setTheme('dark')">
-                <span class="settings-row-label">🌙 Dark mode</span>
+                <span class="settings-row-label"><i class="ti ti-moon" style="font-size:16px;vertical-align:middle;margin-right:8px;color:var(--text2);"></i>Dark mode</span>
                 <span id="scheck-dark" style="color:var(--green);display:none;"><i class="ti ti-check" style="font-size:20px;font-weight:900;"></i></span>
               </div>
               <div class="settings-row" style="cursor:pointer;" onclick="setTheme('system')">
-                <span class="settings-row-label">💻 Use system setting</span>
+                <span class="settings-row-label"><i class="ti ti-device-laptop" style="font-size:16px;vertical-align:middle;margin-right:8px;color:var(--text2);"></i>Use system setting</span>
                 <span id="scheck-system" style="color:var(--green);"><i class="ti ti-check" style="font-size:20px;font-weight:900;"></i></span>
               </div>
             </div>
           </div>
           <div class="settings-group">
-            <div class="settings-group-title">🔔 Notifications</div>
+            <div class="settings-group-title"><i class="ti ti-bell" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>Notifications</div>
             <div class="settings-card">
               <div class="settings-row"><span class="settings-row-label">Low stock alerts</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
               <div class="settings-row"><span class="settings-row-label">Reorder reminders</span><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
             </div>
           </div>
           <div class="settings-group">
-            <div class="settings-group-title">📐 Units</div>
+            <div class="settings-group-title"><i class="ti ti-ruler" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>Units</div>
             <div class="settings-card">
               <div class="settings-row"><span class="settings-row-label">Weight unit</span><span class="settings-row-val">Grams (g)</span></div>
               <div class="settings-row"><span class="settings-row-label">Temperature unit</span><span class="settings-row-val">°C</span></div>
             </div>
           </div>
           <div class="settings-group">
-            <div class="settings-group-title">💾 Data</div>
+            <div class="settings-group-title"><i class="ti ti-database" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>Data</div>
             <div class="settings-card">
-              <div class="settings-row" style="cursor:pointer;" onclick="exportData()"><span class="settings-row-label">Export inventory</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;">↓ Export</span></div>
-              <div class="settings-row" style="cursor:pointer;"><span class="settings-row-label">Import spools</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;">↑ Import</span></div>
+              <div class="settings-row" style="cursor:pointer;" onclick="exportData()"><span class="settings-row-label">Export inventory</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;display:flex;align-items:center;gap:4px;"><i class="ti ti-download" style="font-size:16px;"></i> Export</span></div>
+              <div class="settings-row" style="cursor:pointer;"><span class="settings-row-label">Import spools</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;display:flex;align-items:center;gap:4px;"><i class="ti ti-upload" style="font-size:16px;"></i> Import</span></div>
               <div class="settings-row" style="cursor:pointer;" onclick="if(confirm('Clear ALL spools? This cannot be undone.')){spools=[];saveData();renderAll();navTo('home');}">
-                <span class="settings-row-label" style="color:var(--red);">🗑 Clear all data</span>
+                <span class="settings-row-label" style="color:var(--red);display:flex;align-items:center;gap:8px;"><i class="ti ti-trash" style="font-size:16px;"></i>Clear all data</span>
               </div>
             </div>
           </div>
           <div class="settings-group">
-            <div class="settings-group-title">ℹ️ About</div>
+            <div class="settings-group-title"><i class="ti ti-info-circle" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>About</div>
             <div class="settings-card">
               <div class="settings-row"><span class="settings-row-label">Version</span><span class="settings-row-val">2.0.0</span></div>
               <div class="settings-row"><span class="settings-row-label">Storage used</span><span class="settings-row-val" id="storage-size">—</span></div>
@@ -720,7 +720,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   <div class="panel">
     <div class="panel-header">
       <div>
-        <div class="panel-header-icon" style="background:var(--green-xlight);color:var(--green-dark);">➕</div>
+        <div class="panel-header-icon" style="background:var(--green-xlight);color:var(--green-dark);"><i class="ti ti-plus" style="font-size:22px;"></i></div>
         <div class="panel-title">Add Filament</div>
         <div class="panel-sub">Fill in the details for your new spool.</div>
       </div>
@@ -801,7 +801,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
     </div>
     <div class="panel-footer">
       <button class="btn btn-full btn-disabled" id="save-btn" onclick="saveSpool()">
-        🧵 Save Filament
+        <i class="ti ti-device-floppy"></i> Save Filament
       </button>
     </div>
   </div>
@@ -812,7 +812,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   <div class="panel">
     <div class="panel-header">
       <div>
-        <div class="panel-header-icon" style="background:var(--blue-xlight);color:var(--blue-dark);">🔍</div>
+        <div class="panel-header-icon" style="background:var(--blue-xlight);color:var(--blue-dark);"><i class="ti ti-adjustments-horizontal" style="font-size:22px;"></i></div>
         <div class="panel-title" id="d-name">Spool Details</div>
         <div class="panel-sub" id="d-remaining">—</div>
       </div>
@@ -832,29 +832,29 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
       </div>
 
       <div class="edit-weight-box">
-        <div class="edit-weight-title">✏️ Edit Weight</div>
+        <div class="edit-weight-title"><i class="ti ti-pencil" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>Edit Weight</div>
         <div style="display:flex;gap:10px;align-items:center;">
           <input id="d-weight-input" type="number" class="form-input" style="flex:1;" placeholder="Weight in grams" min="0">
           <button class="btn btn-green btn-sm" onclick="saveWeight()" style="white-space:nowrap;flex-shrink:0;">
-            💾 Save
+            <i class="ti ti-device-floppy"></i> Save
           </button>
         </div>
         <div class="quick-adjust">
           <button class="btn btn-ghost btn-sm" onclick="adjustWeight(-50)">−50g</button>
           <button class="btn btn-ghost btn-sm" onclick="adjustWeight(-100)">−100g</button>
           <button class="btn btn-ghost btn-sm" onclick="adjustWeight(-250)">−250g</button>
-          <button class="btn btn-ghost btn-sm" onclick="setWeightFull()">🔄 Full</button>
+          <button class="btn btn-ghost btn-sm" onclick="setWeightFull()"><i class="ti ti-refresh" style="font-size:14px;vertical-align:middle;"></i> Full</button>
         </div>
       </div>
 
       <div class="notes-box">
-        <div class="notes-title">📝 Notes</div>
+        <div class="notes-title"><i class="ti ti-notes" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>Notes</div>
         <div class="notes-body" id="d-notes">No saved notes.</div>
       </div>
 
       <div style="display:flex;gap:10px;">
         <button class="btn btn-blue" style="flex:1;" onclick="logPrint()">
-          🖨️ Log Print
+          <i class="ti ti-printer"></i> Log Print
         </button>
         <button class="btn btn-red btn-sm" onclick="deleteSpool()">
           <i class="ti ti-trash"></i>
@@ -874,9 +874,9 @@ let currentSpoolIndex = -1;
 let currentPage = 'home';
 
 const pageMeta = {
-  home:     {title:'🏠 Home',     sub:'Your filament collection'},
-  stats:    {title:'📊 Statistics', sub:'Track your usage'},
-  settings: {title:'⚙️ Settings',  sub:'Customize your app'},
+  home:     {title:'Home',       sub:'Your filament collection'},
+  stats:    {title:'Statistics', sub:'Track your usage'},
+  settings: {title:'Settings',   sub:'Customize your app'},
 };
 
 if(spools.length === 0){
@@ -932,7 +932,7 @@ function renderHome(){
 
   // XP banner
   document.getElementById('xp-sub').textContent =
-    spools.length === 0 ? 'Add your first spool to get started! 🚀'
+    spools.length === 0 ? 'Add your first spool to get started!'
     : `${spools.length} spool${spools.length!==1?'s':''} · ${reorder} running low · ${topMat?topMat[0]+' most used':''}`;
   document.getElementById('xp-spools').textContent = spools.length;
   document.getElementById('xp-prints').textContent = totalPrints;
@@ -968,7 +968,7 @@ function renderHome(){
   const grid = document.getElementById('spool-grid');
   if(filtered.length === 0){
     grid.innerHTML = `<div class="empty-state">
-      <div class="empty-emoji">${currentFilter==='All'?'📦':'🔍'}</div>
+      <div class="empty-emoji"><i class="ti ti-${currentFilter==='All'?'box':'filter'}" style="font-size:56px;color:var(--text3);"></i></div>
       <h3>${currentFilter==='All'?'No spools yet!':'No '+currentFilter+' spools'}</h3>
       <p>${currentFilter==='All'?'Tap <strong>+ Add</strong> to add your first filament spool.':'Try selecting a different material filter.'}</p>
     </div>`;
@@ -988,8 +988,8 @@ function renderHome(){
           <div class="spool-name">${s.name}</div>
           <div>${matBadge(s.material)}</div>
           <div class="spool-weight">${s.weight.toLocaleString()} g remaining</div>
-          <div class="spool-pct" style="color:${pctColor}">${pct}% full</div>
-          ${low ? `<div class="low-warn">⚠️ Running Low</div>` : ''}
+          <div class="spool-pct" style="color:${pctColor}">${pct}% remaining</div>
+          ${low ? `<div class="low-warn"><i class="ti ti-alert-triangle" style="font-size:13px;"></i> Running Low</div>` : ''}
         </div>
         <div class="spool-visual">${spoolSVG(s.color, pct)}</div>
       </div>
@@ -1120,7 +1120,9 @@ function openDetail(i){
   document.getElementById('d-remaining').textContent = s.weight.toLocaleString()+' g remaining ('+pct+'%)';
   document.getElementById('d-badge').innerHTML       = matBadge(s.material);
   document.getElementById('d-material').textContent  = s.material;
-  document.getElementById('d-status').textContent    = pct<20?'⚠️ Low':'✅ Good';
+  document.getElementById('d-status').innerHTML    = pct<20
+    ? '<span style="color:var(--red);display:flex;align-items:center;gap:5px;"><i class="ti ti-alert-triangle" style="font-size:16px;"></i> Low</span>'
+    : '<span style="color:var(--green);display:flex;align-items:center;gap:5px;"><i class="ti ti-circle-check" style="font-size:16px;"></i> Good</span>';
   document.getElementById('d-nozzle').textContent    = 'Not set';
   document.getElementById('d-bed').textContent       = 'Not set';
   document.getElementById('d-notes').textContent     = s.notes||'No saved notes.';
