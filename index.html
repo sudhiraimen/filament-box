@@ -423,6 +423,15 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 .notes-title{font-size:12px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
 .notes-body{font-size:14px;font-weight:600;color:var(--text2);line-height:1.5;}
 
+.log-print-box{
+  background:var(--blue-xlight);border:2.5px solid var(--blue);
+  border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;
+  box-shadow:0 3px 0 var(--blue-dark);
+}
+[data-theme="dark"] .log-print-box{background:rgba(28,176,246,.1);}
+.log-print-title{font-size:12px;font-weight:900;color:var(--blue-dark);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+[data-theme="dark"] .log-print-title{color:var(--blue);}
+
 /* ══════════════════════════════
    STATS PAGE
 ══════════════════════════════ */
@@ -833,8 +842,6 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
       <div class="detail-grid">
         <div class="detail-cell"><div class="detail-cell-val" id="d-material">—</div><div class="detail-cell-lbl">Material</div></div>
         <div class="detail-cell"><div class="detail-cell-val" id="d-status">—</div><div class="detail-cell-lbl">Status</div></div>
-        <div class="detail-cell"><div class="detail-cell-val" id="d-nozzle">Not set</div><div class="detail-cell-lbl">Nozzle Temp</div></div>
-        <div class="detail-cell"><div class="detail-cell-val" id="d-bed">Not set</div><div class="detail-cell-lbl">Bed Temp</div></div>
       </div>
 
       <div class="edit-weight-box">
@@ -858,12 +865,26 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
         <div class="notes-body" id="d-notes">No saved notes.</div>
       </div>
 
-      <div style="display:flex;gap:10px;">
-        <button class="btn btn-blue" style="flex:1;" onclick="logPrint()">
-          <i class="ti ti-printer"></i> Log Print
-        </button>
-        <button class="btn btn-red btn-sm" onclick="deleteSpool()">
-          <i class="ti ti-trash"></i>
+      <div class="log-print-box" id="log-print-box">
+        <div class="log-print-title"><i class="ti ti-printer" style="font-size:14px;vertical-align:middle;margin-right:6px;"></i>Log Print</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;">How much filament did you use?</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input id="log-used-input" type="number" class="form-input" style="flex:1;" placeholder="Amount in grams" min="0">
+          <button class="btn btn-blue btn-sm" onclick="confirmLogPrint()" style="white-space:nowrap;flex-shrink:0;">
+            <i class="ti ti-check"></i> Confirm
+          </button>
+        </div>
+        <div class="quick-adjust" style="margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" onclick="setLogAmount(10)">10g</button>
+          <button class="btn btn-ghost btn-sm" onclick="setLogAmount(25)">25g</button>
+          <button class="btn btn-ghost btn-sm" onclick="setLogAmount(50)">50g</button>
+          <button class="btn btn-ghost btn-sm" onclick="setLogAmount(100)">100g</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-red btn-sm" onclick="deleteSpool()" style="flex:1;">
+          <i class="ti ti-trash"></i> Delete spool
         </button>
       </div>
     </div>
@@ -1129,8 +1150,6 @@ function openDetail(i){
   document.getElementById('d-status').innerHTML    = pct<20
     ? '<span style="color:var(--red);display:flex;align-items:center;gap:5px;"><i class="ti ti-alert-triangle" style="font-size:16px;"></i> Low</span>'
     : '<span style="color:var(--green);display:flex;align-items:center;gap:5px;"><i class="ti ti-circle-check" style="font-size:16px;"></i> Good</span>';
-  document.getElementById('d-nozzle').textContent    = 'Not set';
-  document.getElementById('d-bed').textContent       = 'Not set';
   document.getElementById('d-notes').textContent     = s.notes||'No saved notes.';
   document.getElementById('d-spool-svg').innerHTML   = spoolSVG(s.color, pct, 100);
   document.getElementById('d-weight-input').value    = s.weight;
@@ -1157,13 +1176,21 @@ function setWeightFull(){
   if(currentSpoolIndex<0) return;
   document.getElementById('d-weight-input').value=spools[currentSpoolIndex].total;
 }
-function logPrint(){
+function setLogAmount(g){
+  document.getElementById('log-used-input').value = g;
+}
+function confirmLogPrint(){
   if(currentSpoolIndex<0) return;
-  const used=prompt('How much filament did you use? (g)');
-  if(!used) return;
-  const g=parseInt(used); if(isNaN(g)||g<0) return;
-  spools[currentSpoolIndex].weight=Math.max(0,spools[currentSpoolIndex].weight-g);
-  spools[currentSpoolIndex].prints=(spools[currentSpoolIndex].prints||0)+1;
+  const val = parseInt(document.getElementById('log-used-input').value);
+  if(isNaN(val) || val <= 0){ 
+    document.getElementById('log-used-input').style.borderColor='var(--red)';
+    document.getElementById('log-used-input').focus();
+    setTimeout(()=>document.getElementById('log-used-input').style.borderColor='',1200);
+    return;
+  }
+  spools[currentSpoolIndex].weight = Math.max(0, spools[currentSpoolIndex].weight - val);
+  spools[currentSpoolIndex].prints = (spools[currentSpoolIndex].prints||0) + 1;
+  document.getElementById('log-used-input').value = '';
   saveData(); renderAll(); openDetail(currentSpoolIndex);
 }
 function deleteSpool(){
