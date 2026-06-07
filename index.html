@@ -698,7 +698,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
             <div class="settings-card">
               <div class="settings-row" style="cursor:pointer;" onclick="exportData()"><span class="settings-row-label">Export inventory</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;display:flex;align-items:center;gap:4px;"><i class="ti ti-download" style="font-size:16px;"></i> Export</span></div>
               <div class="settings-row" style="cursor:pointer;"><span class="settings-row-label">Import spools</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;display:flex;align-items:center;gap:4px;"><i class="ti ti-upload" style="font-size:16px;"></i> Import</span></div>
-              <div class="settings-row" style="cursor:pointer;" onclick="if(confirm('Clear ALL spools? This cannot be undone.')){spools=[];saveData();renderAll();navTo('home');}">
+              <div class="settings-row" style="cursor:pointer;" onclick="showConfirm('Clear all spools?','This will permanently delete all your filament data and cannot be undone.','Clear All','var(--red)',()=>{spools=[];saveData();renderAll();navTo('home');})">
                 <span class="settings-row-label" style="color:var(--red);display:flex;align-items:center;gap:8px;"><i class="ti ti-trash" style="font-size:16px;"></i>Clear all data</span>
               </div>
             </div>
@@ -932,13 +932,20 @@ function spoolSVG(color, pct, size=88){
   const r=32, cx=size/2, cy=size/2;
   const circ = 2*Math.PI*r;
   const offset = circ*(1-pct/100);
+  const fontSize = size < 70 ? Math.round(size*0.18) : Math.round(size*0.16);
+  const subSize  = size < 70 ? Math.round(size*0.12) : Math.round(size*0.11);
+  const showSub  = size >= 70;
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e5e5e5" stroke-width="10"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="10" opacity=".15"/>
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="10"
       stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"
       stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/>
-    <circle cx="${cx}" cy="${cy}" r="14" fill="${color}" opacity=".15"/>
-    <circle cx="${cx}" cy="${cy}" r="8" fill="${color}"/>
+    <text x="${cx}" y="${showSub ? cx-2 : cx+fontSize*0.35}" text-anchor="middle"
+      font-size="${fontSize}" font-weight="900" fill="${color}"
+      font-family="Nunito,sans-serif">${pct}%</text>
+    ${showSub ? `<text x="${cx}" y="${cx+subSize+4}" text-anchor="middle"
+      font-size="${subSize}" font-weight="700" fill="${color}" opacity=".6"
+      font-family="Nunito,sans-serif">left</text>` : ''}
   </svg>`;
 }
 
@@ -1015,13 +1022,9 @@ function renderHome(){
           <div class="spool-name">${s.name}</div>
           <div>${matBadge(s.material)}</div>
           <div class="spool-weight">${s.weight.toLocaleString()} g remaining</div>
-          <div class="spool-pct" style="color:${pctColor}">${pct}% remaining</div>
           ${low ? `<div class="low-warn"><i class="ti ti-alert-triangle" style="font-size:13px;"></i> Running Low</div>` : ''}
         </div>
         <div class="spool-visual">${spoolSVG(s.color, pct)}</div>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" style="width:${pct}%;background:${s.color};"></div>
       </div>
     </div>`;
   }).join('');
@@ -1195,9 +1198,11 @@ function confirmLogPrint(){
 }
 function deleteSpool(){
   if(currentSpoolIndex<0) return;
-  if(!confirm(`Delete "${spools[currentSpoolIndex].brand} ${spools[currentSpoolIndex].name}"? This can't be undone.`)) return;
-  spools.splice(currentSpoolIndex,1); currentSpoolIndex=-1;
-  saveData(); renderAll(); closePanel('detail-overlay');
+  const s = spools[currentSpoolIndex];
+  showConfirm(`Delete "${s.brand} ${s.name}"?`, "This spool will be permanently removed from your inventory.", 'Delete', 'var(--red)', ()=>{
+    spools.splice(currentSpoolIndex,1); currentSpoolIndex=-1;
+    saveData(); renderAll(); closePanel('detail-overlay');
+  });
 }
 function exportData(){
   const blob=new Blob([JSON.stringify(spools,null,2)],{type:'application/json'});
@@ -1231,5 +1236,98 @@ applyTheme();
 renderAll();
 updateStorageSize();
 </script>
+<!-- CUSTOM CONFIRM MODAL -->
+<div id="confirm-overlay" style="
+  position:fixed;inset:0;z-index:500;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);
+  padding:24px;
+">
+  <div id="confirm-box" style="
+    background:var(--surface);border:3px solid var(--border);
+    border-radius:var(--radius);box-shadow:0 8px 0 var(--border-thick);
+    width:100%;max-width:360px;padding:28px 24px 20px;
+    transform:scale(.92);opacity:0;
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1),opacity .18s;
+  ">
+    <div id="confirm-icon-wrap" style="
+      width:52px;height:52px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:24px;margin-bottom:16px;
+    "></div>
+    <div id="confirm-title" style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px;"></div>
+    <div id="confirm-body" style="font-size:14px;font-weight:600;color:var(--text2);line-height:1.5;margin-bottom:24px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="hideConfirm()" style="
+        flex:1;padding:13px;border-radius:var(--radius-sm);
+        border:2.5px solid var(--border);background:var(--surface2);
+        color:var(--text2);font-size:14px;font-weight:900;
+        font-family:var(--font);cursor:pointer;
+        box-shadow:0 3px 0 var(--border-thick);
+        transition:transform .1s,box-shadow .1s;
+      " onmousedown="this.style.transform='translateY(2px)';this.style.boxShadow='none'"
+         onmouseup="this.style.transform='';this.style.boxShadow=''"
+      >Cancel</button>
+      <button id="confirm-action-btn" style="
+        flex:1;padding:13px;border-radius:var(--radius-sm);
+        border:2.5px solid var(--red-dark);background:var(--red);
+        color:#fff;font-size:14px;font-weight:900;
+        font-family:var(--font);cursor:pointer;
+        box-shadow:0 3px 0 var(--red-dark);
+        transition:transform .1s,box-shadow .1s;
+      " onmousedown="this.style.transform='translateY(2px)';this.style.boxShadow='none'"
+         onmouseup="this.style.transform='';this.style.boxShadow=''"
+      >Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _confirmCallback = null;
+
+function showConfirm(title, body, actionLabel, actionColor, callback){
+  _confirmCallback = callback;
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-body').textContent  = body;
+
+  const btn = document.getElementById('confirm-action-btn');
+  btn.textContent = actionLabel;
+  btn.style.background      = actionColor;
+  btn.style.borderColor     = actionColor === 'var(--red)' ? 'var(--red-dark)' : actionColor;
+  btn.style.boxShadow       = `0 3px 0 ${actionColor === 'var(--red)' ? 'var(--red-dark)' : actionColor}`;
+
+  const icon = document.getElementById('confirm-icon-wrap');
+  icon.style.background = actionColor === 'var(--red)' ? 'var(--red-xlight)' : 'var(--blue-xlight)';
+  icon.innerHTML = actionColor === 'var(--red)'
+    ? '<i class="ti ti-alert-triangle" style="color:var(--red);font-size:26px;"></i>'
+    : '<i class="ti ti-info-circle" style="color:var(--blue);font-size:26px;"></i>';
+
+  const ov  = document.getElementById('confirm-overlay');
+  const box = document.getElementById('confirm-box');
+  ov.style.display = 'flex';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    box.style.transform = 'scale(1)';
+    box.style.opacity   = '1';
+  }));
+}
+
+function hideConfirm(){
+  const box = document.getElementById('confirm-box');
+  box.style.transform = 'scale(.92)';
+  box.style.opacity   = '0';
+  setTimeout(()=>{ document.getElementById('confirm-overlay').style.display='none'; }, 180);
+  _confirmCallback = null;
+}
+
+document.getElementById('confirm-action-btn').addEventListener('click', ()=>{
+  if(_confirmCallback) _confirmCallback();
+  hideConfirm();
+});
+
+document.getElementById('confirm-overlay').addEventListener('click', e=>{
+  if(e.target === document.getElementById('confirm-overlay')) hideConfirm();
+});
+</script>
+
 </body>
 </html>
