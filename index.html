@@ -643,11 +643,9 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
           </div>
         </div>
 
-        <div class="stats-grid" id="stats-grid"></div>
-
         <div class="section-header">
-          <div class="section-title">Your Spools</div>
-          <div class="filters" id="filters">
+          <div class="section-title" style="white-space:nowrap;flex-shrink:0;">Your Spools</div>
+          <div class="filters" id="filters" style="flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;">
             <div class="chip active" data-filter="All" onclick="filterSpools(this)">All</div>
             <div class="chip" data-filter="ABS" onclick="filterSpools(this)">ABS</div>
             <div class="chip" data-filter="PETG" onclick="filterSpools(this)">PETG</div>
@@ -661,6 +659,7 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 
       <!-- STATS -->
       <section class="page-section" id="page-stats">
+        <div class="stats-grid" id="stats-grid" style="margin-bottom:20px;"></div>
         <div class="stats-row-page">
           <div class="stats-box">
             <div class="stats-box-title"><i class="ti ti-chart-bar" style="font-size:16px;vertical-align:middle;margin-right:6px;"></i>By Material</div>
@@ -982,26 +981,6 @@ function renderHome(){
     `${spools.length} spools · ${totalPrints} prints`;
   document.getElementById('streak-val').textContent = totalPrints;
 
-  // stats grid
-  const reorderColor = reorder>0 ? 'var(--red)' : 'var(--green)';
-  document.getElementById('stats-grid').innerHTML = `
-    <div class="stat-card">
-      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-      <div class="s-texts"><div class="s-val" style="color:var(--blue)">${totalKg.toFixed(2)}<span style="font-size:14px;font-weight:700;"> kg</span></div><div class="s-lbl">Available</div></div>
-    </div>
-    <div class="stat-card">
-      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg></div>
-      <div class="s-texts"><div class="s-val" style="color:var(--green)">${spools.length}</div><div class="s-lbl">Spools</div></div>
-    </div>
-    <div class="stat-card">
-      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-      <div class="s-texts"><div class="s-val" style="color:var(--purple)">${totalPrints}</div><div class="s-lbl">Prints</div></div>
-    </div>
-    <div class="stat-card">
-      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${reorderColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-      <div class="s-texts"><div class="s-val" style="color:${reorderColor}">${reorder}</div><div class="s-lbl">Reorder</div></div>
-    </div>`;
-
   // spool grid
   const grid = document.getElementById('spool-grid');
   if(filtered.length === 0){
@@ -1041,7 +1020,28 @@ function renderStats(){
   spools.forEach(s=>{matCounts[s.material]=(matCounts[s.material]||0)+1;});
   const totalPrints = spools.reduce((a,s)=>a+(s.prints||0),0);
   const totalWeight = spools.reduce((a,s)=>a+s.weight,0);
+  const totalKg     = totalWeight/1000;
   const reorder     = spools.filter(s=>s.weight/s.total<0.2).length;
+
+  // Stat cards (now live on stats page)
+  const reorderColor = reorder>0 ? 'var(--red)' : 'var(--green)';
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <div class="s-texts"><div class="s-val" style="color:var(--blue)">${totalKg.toFixed(2)}<span style="font-size:14px;font-weight:700;"> kg</span></div><div class="s-lbl">Available</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg></div>
+      <div class="s-texts"><div class="s-val" style="color:var(--green)">${spools.length}</div><div class="s-lbl">Spools</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      <div class="s-texts"><div class="s-val" style="color:var(--purple)">${totalPrints}</div><div class="s-lbl">Prints</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="s-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${reorderColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <div class="s-texts"><div class="s-val" style="color:${reorderColor}">${reorder}</div><div class="s-lbl">Reorder</div></div>
+    </div>`;
 
   const bars = document.getElementById('mat-bars');
   if(spools.length === 0){
