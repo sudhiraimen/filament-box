@@ -218,17 +218,24 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 .stat-card .s-lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:5px;}
 
 /* FILTERS */
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.section-title{font-size:16px;font-weight:900;color:var(--text);text-transform:uppercase;letter-spacing:.05em;}
-.filters{display:flex;gap:8px;flex-wrap:wrap;}
+.section-header{margin-bottom:14px;}
+.section-title{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--text);margin-bottom:10px;}
+.filters{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.filters::-webkit-scrollbar{display:none;}
 .chip{
-  padding:5px 12px;border-radius:var(--radius-pill);font-size:12px;font-weight:800;
-  border:2.5px solid var(--border);background:var(--surface);color:var(--text2);
+  display:flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--radius-pill);font-size:13px;font-weight:800;
+  border:2.5px solid var(--border);background:var(--surface2);color:var(--text2);
   cursor:pointer;transition:all .1s;white-space:nowrap;font-family:var(--font);
   box-shadow:0 2px 0 var(--border-thick);
 }
 .chip:active{transform:translateY(1px);box-shadow:none;}
 .chip.active{background:var(--green);border-color:var(--green-dark);color:#fff;box-shadow:0 2px 0 var(--green-dark);}
+.chip-badge{
+  background:rgba(0,0,0,.12);border-radius:var(--radius-pill);
+  font-size:10px;font-weight:900;padding:1px 7px;
+}
+.chip.active .chip-badge{background:rgba(255,255,255,.3);}
 
 /* SPOOL GRID */
 .spool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px;}
@@ -642,13 +649,13 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
         </div>
 
         <div class="section-header">
-          <div class="section-title" style="white-space:nowrap;flex-shrink:0;">Your Spools</div>
-          <div class="filters" id="filters" style="flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;">
-            <div class="chip active" data-filter="All" onclick="filterSpools(this)">All</div>
-            <div class="chip" data-filter="ABS" onclick="filterSpools(this)">ABS</div>
-            <div class="chip" data-filter="PETG" onclick="filterSpools(this)">PETG</div>
-            <div class="chip" data-filter="PLA" onclick="filterSpools(this)">PLA</div>
-            <div class="chip" data-filter="TPU" onclick="filterSpools(this)">TPU</div>
+          <div class="section-title">Your Spools</div>
+          <div class="filters" id="filters">
+            <div class="chip active" data-filter="All" onclick="filterSpools(this)">All <span class="chip-badge" id="badge-All">0</span></div>
+            <div class="chip" data-filter="ABS" onclick="filterSpools(this)">ABS <span class="chip-badge" id="badge-ABS">0</span></div>
+            <div class="chip" data-filter="PETG" onclick="filterSpools(this)">PETG <span class="chip-badge" id="badge-PETG">0</span></div>
+            <div class="chip" data-filter="PLA" onclick="filterSpools(this)">PLA <span class="chip-badge" id="badge-PLA">0</span></div>
+            <div class="chip" data-filter="TPU" onclick="filterSpools(this)">TPU <span class="chip-badge" id="badge-TPU">0</span></div>
           </div>
         </div>
 
@@ -978,6 +985,14 @@ function renderHome(){
   document.getElementById('sb-subtitle').textContent =
     `${spools.length} spools · ${totalPrints} prints`;
   document.getElementById('streak-val').textContent = totalPrints;
+
+  // Update filter badge counts
+  const allMats = ['ABS','PETG','PLA','TPU'];
+  document.getElementById('badge-All').textContent = spools.length;
+  allMats.forEach(m => {
+    const el = document.getElementById('badge-'+m);
+    if(el) el.textContent = spools.filter(s=>s.material===m).length;
+  });
 
   // spool grid
   const grid = document.getElementById('spool-grid');
