@@ -370,7 +370,6 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 .color-dot{
   width:32px;height:32px;border-radius:50%;cursor:pointer;
   border:3px solid transparent;transition:transform .1s,border-color .1s;
-  box-shadow:0 2px 0 rgba(0,0,0,.15);
 }
 .color-dot:active{transform:scale(.9);}
 .color-dot.sel{border-color:var(--text);transform:scale(1.15);}
@@ -707,7 +706,8 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
             <div class="settings-group-title"><i class="ti ti-database" style="font-size:14px;vertical-align:middle;margin-right:5px;"></i>Data</div>
             <div class="settings-card">
               <div class="settings-row" style="cursor:pointer;" onclick="exportData()"><span class="settings-row-label">Export inventory</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;display:flex;align-items:center;gap:4px;"><i class="ti ti-download" style="font-size:16px;"></i> Export</span></div>
-              <div class="settings-row" style="cursor:pointer;"><span class="settings-row-label">Import spools</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;display:flex;align-items:center;gap:4px;"><i class="ti ti-upload" style="font-size:16px;"></i> Import</span></div>
+              <div class="settings-row" style="cursor:pointer;" onclick="document.getElementById('import-input').click()"><span class="settings-row-label">Import spools</span><span class="settings-row-val" style="color:var(--blue);font-weight:900;display:flex;align-items:center;gap:4px;"><i class="ti ti-upload" style="font-size:16px;"></i> Import</span></div>
+              <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(event)">
               <div class="settings-row" style="cursor:pointer;" onclick="showConfirm('Clear all spools?','This will permanently delete all your filament data and cannot be undone.','Clear All','var(--red)',()=>{spools=[];saveData();renderAll();navTo('home');})">
                 <span class="settings-row-label" style="color:var(--red);display:flex;align-items:center;gap:8px;"><i class="ti ti-trash" style="font-size:16px;"></i>Clear all data</span>
               </div>
@@ -806,9 +806,9 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
           <div class="color-dot" data-c="#d97706" style="background:#d97706" onclick="selectColor(this)"></div>
           <div class="color-dot" data-c="#78716c" style="background:#78716c" onclick="selectColor(this)"></div>
           <div class="color-dot" data-c="#94a3b8" style="background:#94a3b8" onclick="selectColor(this)"></div>
-          <div class="color-dot" data-c="#cbd5e1" style="background:#cbd5e1;border-color:#e2e8f0" onclick="selectColor(this)"></div>
-          <div class="color-dot" data-c="#ffffff" style="background:#fff;border-color:#e2e8f0" onclick="selectColor(this)"></div>
-          <div class="color-dot" data-c="#1a1a1a" style="background:#1a1a1a" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#ffc800" style="background:#ffc800" onclick="selectColor(this)"></div>
+          <div class="color-dot" data-c="#ffffff" style="background:#fff;" onclick="selectColor(this)"></div>
+          <div class="color-dot dark-dot" data-c="#1a1a1a" style="background:#1a1a1a" onclick="selectColor(this)"></div>
           <div class="color-dot" data-c="#a16207" style="background:#a16207" onclick="selectColor(this)"></div>
           <div class="color-dot" data-c="#b45309" style="background:#b45309" onclick="selectColor(this)"></div>
           <div class="color-dot" data-c="#15803d" style="background:#15803d" onclick="selectColor(this)"></div>
@@ -945,16 +945,19 @@ function spoolSVG(color, pct, size=88){
   const fontSize = size < 70 ? Math.round(size*0.18) : Math.round(size*0.16);
   const subSize  = size < 70 ? Math.round(size*0.12) : Math.round(size*0.11);
   const showSub  = size >= 70;
+  // Make very dark colours visible in dark mode by lightening them
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const displayColor = (isDark && color === '#1a1a1a') ? '#aaaaaa' : color;
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="10" opacity=".15"/>
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="10"
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${displayColor}" stroke-width="10" opacity=".15"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${displayColor}" stroke-width="10"
       stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"
       stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/>
     <text x="${cx}" y="${showSub ? cx-2 : cx+fontSize*0.35}" text-anchor="middle"
-      font-size="${fontSize}" font-weight="900" fill="${color}"
+      font-size="${fontSize}" font-weight="900" fill="${displayColor}"
       font-family="Nunito,sans-serif">${pct}%</text>
     ${showSub ? `<text x="${cx}" y="${cx+subSize+4}" text-anchor="middle"
-      font-size="${subSize}" font-weight="700" fill="${color}" opacity=".6"
+      font-size="${subSize}" font-weight="700" fill="${displayColor}" opacity=".6"
       font-family="Nunito,sans-serif">left</text>` : ''}
   </svg>`;
 }
@@ -1259,6 +1262,31 @@ function exportData(){
   const blob=new Blob([JSON.stringify(spools,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='filament-box-export.json';a.click();
+}
+function importData(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if(!Array.isArray(imported)) throw new Error('Invalid format');
+      showConfirm(
+        `Import ${imported.length} spools?`,
+        'This will replace your current inventory. Make sure to export first if you want to keep it.',
+        'Import', 'var(--blue)',
+        () => {
+          spools = imported;
+          saveData(); renderAll();
+          showConfirm('Import successful!', `${imported.length} spools have been loaded into your inventory.`, 'Done', 'var(--green)', ()=>{});
+        }
+      );
+    } catch {
+      showConfirm('Import failed', 'The file could not be read. Make sure it is a valid Filament Box export (.json).', 'OK', 'var(--red)', ()=>{});
+    }
+    e.target.value = ''; // reset so same file can be re-imported
+  };
+  reader.readAsText(file);
 }
 
 // ── THEME ──
